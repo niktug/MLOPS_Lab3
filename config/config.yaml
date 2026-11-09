@@ -1,0 +1,16 @@
+model:
+  name: cointegrated/rubert-tiny2
+  num_labels: 2
+  max_length: 128
+
+training:
+  learning_rate: 2e-5
+  batch_size: 16
+  epochs: 3
+  seed: 42
+
+data:
+  train_path: data/train_subset.csv
+  val_path: data/val_subset.csv
+  text_column: text
+  label_column: label

@@ -1,0 +1,16 @@
+venv/
+__pycache__/
+*.pyc
+
+# Данные и чекпоинты
+data/*.csv
+checkpoints/
+outputs/
+final_model/
+
+# MLflow
+mlruns/
+
+# IDE
+.idea/
+.vscode/
