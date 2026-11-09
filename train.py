@@ -11,6 +11,7 @@ from transformers import (
     TrainingArguments,
     Trainer,
     DataCollatorWithPadding,
+    TrainerCallback,
 )
 from sklearn.metrics import accuracy_score, f1_score
 import hydra
@@ -32,6 +33,16 @@ def compute_metrics(eval_pred):
         "accuracy": accuracy_score(labels, preds),
         "f1": f1_score(labels, preds, average="weighted"),
     }
+
+
+class MLflowCallback(TrainerCallback):
+    """Логирует метрики в MLflow после каждой эпохи."""
+
+    def on_evaluate(self, args, state, control, metrics=None, **kwargs):
+        if metrics:
+            for key, value in metrics.items():
+                if isinstance(value, (int, float)):
+                    mlflow.log_metric(key, value, step=int(state.epoch))
 
 
 @hydra.main(config_path="config", config_name="config", version_base=None)
@@ -110,6 +121,7 @@ def train(cfg: DictConfig):
             tokenizer=tokenizer,
             data_collator=DataCollatorWithPadding(tokenizer),
             compute_metrics=compute_metrics,
+            callbacks=[MLflowCallback()],
         )
 
         # 4. Обучение
